@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bootstrap demo</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  <style>
+    .carousel-item img {
+      height: 550px;
+      width: 500px;
+      /* Add any other styling you want for the carousel images here */
+    }
+
+    .card {
+      margin: 0;
+    }
+
+    /* If you want to target specific cards only, use their unique classes or IDs */
+    .custom-card {
+      margin: 0;
+    }
+
+    .servdiv {
+      height: 30px;
+      background-color: black;
+      color: white;
+      margin-top: 0%;
+
+    }
+
+    .container {
+      display: flex;
+      align-items: center stretch;
+      justify-content: space-evenly;
+      gap: 0px;
+    }
+
+    .container2 {
+      display: flex;
+      align-items: center stretch;
+      justify-content: space-evenly stretch;
+      gap: 0px 0px;
+      padding-bottom: 0%;
+    }
+
+    .container3 {
+      display: flex;
+      align-items: center stretch;
+      justify-content: space-evenly;
+
+    }
+
+
+    /* Custom class for scrollable card body */
+    .scrollable-card-body {
+      height: 200px;
+      /* Set the desired height for the scrollable area */
+      overflow-y: auto;
+      /* Add a vertical scrollbar when content overflows */
+    }
+
+    .write-us-section {
+      flex-direction: column;
+    }
+
+    .write-us-section div {
+      margin-bottom: 10px;
+    }
+
+    .write-us-section h1 {
+      margin-bottom: 30px;
+    }
+
+    .aukha {
+
+      color: red;
+
+      font-weight: bold;
+
+    }
+
+    .saukha {
+
+      color: rgb(1, 7, 1);
+
+      font-weight: bold;
+
+    }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+    integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script>
+    $(document).ready(function () {
+
+      //password validation ========================
+      $("#txtPassword").blur(function () {
+        var password = $(this).val();
+        // Validate password length
+        if (password.length < 8) {
+          // alert();
+          $("#resP").html("Password must be at least 8 characters long");
+          $("#resP").addClass("aukha").removeClass("saukha");
+          return;
+
+        } else {
+          $("#resP").html("");
+          $("#resP").addClass("saukha").removeClass("aukha");
+
+        }
+        // Validate presence of special characters
+        var specialChars = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+        if (!specialChars.test(password)) {
+          $("#resP").html("Password must contain at least one special character");
+          $("#resP").addClass("aukha").removeClass("saukha");
+          return;
+        } else {
+          $("#resP").html("");
+          $("#resP").addClass("saukha").removeClass("aukha");
+        }
+        // Validate presence of uppercase letters
+        var uppercaseChars = /[A-Z]/;
+        if (!uppercaseChars.test(password)) {
+          $("#resP").html("Password must contain at least one uppercase letter");
+          $("#resP").addClass("aukha").removeClass("saukha");
+          return;
+        } else {
+          $("#resP").addClass("saukha").removeClass("aukha");
+        }
+        // Validate presence of numbers
+        var numericChars = /[0-9]/;
+        if (!numericChars.test(password)) {
+          $("#resP").html("Password must contain at least one numeric character");
+          $("#resP").addClass("aukha").removeClass("saukha");
+          return;
+        } else {
+          $("#resP").addClass("saukha").removeClass("aukha");
+        }
+      });
+
+      //Email validation ===========================
+      $("#txtEmail").blur(function () {
+        //validation ........
+        var r = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+        var email = $(this).val();
+        if (r.test(email) == false) {
+          //  alert("");
+          $("#res").html("  Invalid email");
+          $("#res").addClass("aukha").removeClass("saukha");
+        }
+
+        else {
+          $("#res").html("");
+          $("#res").addClass("saukha").removeClass("aukha");
+          var emailKu = $(this).val();
+          var obj = {
+            type: "get",
+            url: "/chk-email",
+            data: {
+              kuchEmail: emailKu
+            }
+          }
+
+          $.ajax(obj).done(function (respKuch) {
+            //alert(respKuch);
+            $("#res").html(respKuch);
+          }).fail(function (errKuch) {
+            // alert(errKuch)
+            $("#res").html(respKuch);
+          })
+
+        }
+      })
+
+      //========================== On Signup ========
+
+      /* $("#btnsignup").click(function () {
+         var email = $("#txtEmail").val();
+         var password = $("#txtPassword").val();
+         var type = $("#txtType").val();
+ 
+         var obj = {
+           type: "get",
+           url: "/signup-data",
+           data: {
+             kuchEmail: email,
+             kuchPassword: password,
+             kuchType: type
+           }
+         }
+ 
+         $.ajax(obj).done(function (respKuch) {
+           //alert(respKuch);
+           $("#ressignup").html(respKuch);
+ 
+         }).fail(function (errKuch) {
+           alert(errKuch);
+ 
+           //$("#ressignup").html(respKuch);
+         })
+ 
+ 
+       })*/
+      $("#btnsignup").click(function () {
+        var email = $("#txtEmail").val();
+        var password = $("#txtPassword").val();
+        var type = $("#txtType").val();
+
+        var signupObj = {
+          type: "get", // Or keep it as "get" based on your server implementation
+          url: "/signup-data",
+          data: {
+            kuchEmail: email,
+            kuchPassword: password,
+            kuchType: type,
+          },
+        };
+
+        $.ajax(signupObj)
+          .done(function (respKuch) {
+            $("#ressignup").html(respKuch);
+            // If signup is successful, send the email
+            var emailObj = {
+              type: "post", // Change it to "post" for the email sending request
+              url: "/send-email",
+              data: {
+                kuchEmail: email,
+                kuchType: type,
+              },
+            };
+
+            $.ajax(emailObj)
+              .done(function (respEmail) {
+                console.log(respEmail); // If you want to do something with the response
+              })
+              .fail(function (errEmail) {
+                console.log('Error sending email:', errEmail);
+              });
+          })
+          .fail(function (errKuch) {
+            alert(errKuch);
+          });
+      });
+
+
+      //Login =================
+
+      $("#LtxtEmail").blur(function () {
+        //validation ........
+        var r = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+        var email = $(this).val();
+        if (r.test(email) == false) {
+          //  alert("");
+          $("#resl").html("  Invalid email");
+          $("#resl").addClass("aukha").removeClass("saukha");
+        }
+
+        else {
+          $("#resl").html("");
+          $("#resl").addClass("saukha").removeClass("aukha");
+        }
+      })
+
+
+      $("#LbtnLogin").click(function () {
+        //  alert("hi");
+        var emailKu = $("#LtxtEmail").val();
+        var password = $("#LtxtPassword").val();
+        var obj = {        // ajax k liye object h -- ek object bna jiske andr hum specify krenge .. urk=l hadler aur data (kuchEmail)
+          type: "get",
+          url: "/chk-email-login",
+          data: {
+            kuchEmail: emailKu,
+            kuchPassword: password
+          }
+        }
+
+        $.ajax(obj).done(function (respKuch) {
+          localStorage.setItem("activeKuch", $("#LtxtEmail").val());
+
+          // alert(respKuch)
+          if (respKuch == "Donor")
+            location.href = "dash-donor.html";
+          else if (respKuch == "Needy")
+            location.href = "dash-needy.html"
+          else
+            alert(respKuch);
+        }).fail(function (errKuch) {
+          alert(errKuch)
+          //$("#resl").html(respKuch);
+        })
+
+      })
+
+
+
+
+
+    })
+  </script>
+
+</head>
+
+<body>
+
+  <nav class="navbar bg-dark border-bottom border-bottom-dark" data-bs-theme="dark">
+
+    <div class="col-md-3 offset-md-1 " style="color: deepskyblue;">
+      <h2><b>Help Rx</b></h2>
+    </div>
+
+    <div class=" col-md-3 offset-md-5 d-grid gap-2 d-md-block">
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signupModal">
+        Signup
+      </button>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+        Login
+      </button>
+    </div>
+    <br>
+  </nav>
+  <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="pics/Community.jpg" class="d-block w-100" alt="...">
+      </div>
+      <div class="carousel-item">
+        <img src="pics/bigstock-Giving-The-Medicine-80365613.webp" class="d-block w-100" alt="...">
+      </div>
+      <div class="carousel-item">
+        <img src="pics/pexels-photo-4021806.jpeg" class="d-block w-100" alt="...">
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying"
+      data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying"
+      data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+
+
+
+
+
+  <!-- Signup Modal -->
+  <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5 text-center" id="signupModalLabel">SIGN-UP</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-body">
+            <form method="post">
+
+              <img src="pics/509-5097256_new-svg-image-login-logo-user-icon-hd.png" alt="" style="  height: 100px;
+                    width: 100px;
+                    border-radius: 100%;
+                    margin-left: 170px;"><br>
+              <br>
+              <div class="form-group">
+                <label for="txtEmail" class="col-form-label">Email</label>
+                <span id="res"> *</span>
+                <input type="text" class="form-control" id="txtEmail">
+              </div>
+              <div class="form-group">
+                <label for="txtPassword" class="col-form-label">Password</label>
+                <span id="resP"> *</span>
+                <input type="text" class="form-control" id="txtPassword">
+              </div>
+              <div class="form-group">
+                <label for="txtType" class="col-form-label">Type</label>
+                <select class="form-select form-control form-control-lg" id="txtType"
+                  aria-label="Default select example">
+                  <option selected>Open this select menu</option>
+                  <option value="Donor">Donor</option>
+                  <option value="Needy">Needy</option>
+
+                </select>
+              </div>
+            </form>
+
+          </div>
+        </div>
+        <div>
+          <center><button type="button" id="btnsignup" class="btn btn-primary">Signup</button></center>
+        </div>
+        <center>
+          <div id="ressignup">*</div>
+        </center><br>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Login Modal -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5 text-center" id="loginModalLabel">LOGIN</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-body">
+            <form method="post">
+
+              <img src="pics/509-5097256_new-svg-image-login-logo-user-icon-hd.png" alt="" style="  height: 100px;
+                      width: 100px;
+                      border-radius: 100%;
+                      margin-left: 170px;"><br>
+              <br>
+              <div class="form-group">
+                <label for="LtxtEmail" class="col-form-label">Email</label>
+                <span id="res"> *</span>
+                <input type="text" class="form-control" id="LtxtEmail">
+              </div>
+              <div class="form-group">
+                <label for="LtxtPassword" class="col-form-label">Password</label>
+                <span id="resP"> *</span>
+                <input type="text" class="form-control" id="LtxtPassword">
+              </div>
+            </form>
+
+          </div>
+        </div>
+        <div>
+          <center><button type="button" id="LbtnLogin" class="btn btn-primary">Login</button></center>
+        </div>
+        <br><br>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="servdiv">
+    <center>OUR SERVICES</center>
+  </div>
+  <div class="container">
+    <div class="card" style="width: 20rem;">
+      <img src="pics/GiveHands-iStock-Blog-1280x620-1280x620.jpg"
+        style="height: 180px; width: 288px; align-items: center ;" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">
+          <center>Donation</center>
+        </h5>
+        <p class="card-text scrollable-card-body">Medicine donation is a vital act of compassion that saves lives and
+          makes a significant impact on the well-being of those in need. By contributing unused or unexpired
+          medications, people can extend a helping hand to vulnerable communities and promote health equity. This
+          selfless gesture not only reduces medical waste but also ensures that essential treatments reach those who
+          might otherwise struggle to access them. Through medicine donation, we can foster hope, relief, and better
+          healthcare for all, creating a healthier and more caring world. Together, our generosity can make a meaningful
+          difference in the lives of countless individuals, offering them the chance for a brighter and healthier
+          future.</p>
+
+      </div>
+    </div>
+    <div class="card" style="width: 18rem;">
+      <img src="pics/istockphoto-1276811978-170667a-needy.jpg" style="height: 180px; width: 286px; align-items: center;"
+        class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">
+          <center>Needy</center>
+        </h5>
+        <p class="card-text scrollable-card-body ">Medicine-needy individuals are those who lack access to necessary
+          medications due to financial constraints or limited resources. They may be facing serious health conditions
+          but are unable to afford or obtain essential treatments. Supporting the medicine-needy is a compassionate
+          endeavor that can significantly improve their quality of life and well-being. By providing donations or access
+          to affordable medicines, we can help alleviate their suffering and ensure that everyone has a fair chance at
+          better health. Empathy and solidarity with the medicine-needy can make a meaningful difference in their lives
+          and create a healthier, more inclusive society.</p>
+
+      </div>
+    </div>
+    <div class="card" style="width: 18rem;">
+      <img src="pics/terms-conditions-sign-yellow-sticky-note-message-paper-238200006.jpg"
+        style="height: 180px; width:286px; align-items: center;" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">
+          <center>Terms & Conditions</center>
+        </h5>
+        <p class="card-text scrollable-card-body">Welcome to our non-profit medicine donation website, where compassion
+          meets generosity. Our platform serves as a bridge between compassionate donors and individuals in critical
+          need of essential medications. As a donor, your contributions of unused, unexpired medicines in their original
+          packaging have the power to make a profound impact on the lives of vulnerable communities, promoting health
+          equity and reducing wastage.
+
+          For medicine-needy individuals, our platform offers hope and relief during challenging times, ensuring access
+          to crucial medications. However, it's important to note that while we facilitate this connection, our company
+          is not responsible for any misuse, illegal supply, or improper handling of donated medicines.
+
+          Rest assured, every donation is handled with the utmost care and discretion. We are committed to upholding the
+          integrity of our mission and maintaining a transparent and responsible approach.
+
+          Together, let us work towards making healthcare accessible to all, creating a healthier, more compassionate
+          world. Thank you for joining us in this noble cause to improve the well-being of fellow human beings.</p>
+
+      </div>
+    </div>
+    <div class="card" style="width: 18rem;">
+      <img src="pics/non-pro.jpg" style="height: 180px; width: 286px; align-items: center;" class="card-img-top"
+        alt="...">
+      <div class="card-body">
+        <h5 class="card-title">
+          <center>Non-Profit Org.</center>
+        </h5>
+        <p class="card-text scrollable-card-body">We take pride in being a non-profit organization committed to serving
+          the community and making a positive impact on the lives of those in need. Our company's mission revolves
+          around the principle of altruism, putting the welfare of individuals before any financial gains. As a
+          non-profit, our focus remains solely on fulfilling our charitable objectives and providing valuable services
+          to both donors and medicine-needy individuals. By operating as a non-profit, we aim to create a transparent
+          and accountable platform, where every contribution goes directly towards supporting those requiring essential
+          medications. Your trust in our organization enables us to continue our vital work and make a meaningful
+          difference in the lives of many. Together, we can foster a culture of giving and compassion, ensuring that no
+          one is left behind when it comes to access to crucial healthcare resources.</p>
+
+      </div>
+    </div>
+  </div>
+  <div class="servdiv">
+    <center>Meet The Developers</center>
+  </div>
+  <div class="container2 ">
+    <div class="card mb-3" style="max-width:50%; max-height: max-content;">
+      <div class="row g-0 container3 ">
+        <div class="col-md-4">
+          <img src="pics/IMG_20221223_173759 (1).jpg" class="img-fluid rounded-start" alt="...">
+        </div>
+        <div class="col-md-8" style="align-content: center;">
+          <div class="card-body" style="padding-right: 0px;">
+            <h5 class="card-title">Developed By:</h5>
+            <p class="card-text">Name - Parnoor Kaur</p>
+            <p class="card-text">Email - 12112167@gmail.com</p>
+            <p class="card-text">College - NIT Kurukshetra</p>
+            <p class="card-text">Branch - Computer Engineering</p>
+            <p class="card-text">Semester - 5th</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card mb-3" style="max-width: 50%; max-height: fit-content;">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img src="pics/photo.jpg" class="img-fluid rounded-start" alt="...">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">Under The Guidance Of</h5>
+            <p class="card-text">Name - Mr. Rajesh K Bansal</p>
+            <p class="card-text">Institute - Banglore Computer Education</p>
+            <p class="card-text">Author Of RealJava</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+  <div class="servdiv">
+    <center>Reach Us</center>
+  </div>
+  <div class="row w-100">
+    <div class="col-lg-6 my-4"><iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3457.10876484942!2d76.82013447543174!3d29.947549974972535!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390e3f422f5244e7%3A0x9c630c311d6349b8!2sNIT%20KURUKSHETRA!5e0!3m2!1sen!2sin!4v1689904828660!5m2!1sen!2sin"
+        class="w-100" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+
+
+    <div class="col-lg-6 my-4 d-flex align-items-center write-us-section ">
+      <ul class="list-unstyled">
+        <li>
+          <h1 style="font-family: cursive"><b><i>Write Us AT</i></b></h1>
+        </li>
+      </ul><br><br>
+      <ul class="list-unstyled">
+        <li>
+          <h2><i class="fab fa-instagram"></i>
+            parnoor._.07</h2>
+        </li><br>
+        <li>
+          <h2><i class="fas fa-envelope"></i>
+            12112167@nitkkr.ac.in</h2>
+        </li><br>
+        <li>
+          <h2><i class="fas fa-phone"></i>
+            8146199066</h2>
+        </li>
+      </ul>
+    </div>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bootstrap demo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  <script src="script/angular.min.js"></script>
+  <script>
+    var module = angular.module("myModule", []);
+    module.controller("myController", function ($scope, $http) {
+      $scope.jsonArrayCity;
+      $scope.fetchDonorsCity = function () {
+        //alert("in fetch");
+        var url = "/get-angular-find-medDonors-city";
+        $http.get(url).then(done, fail);
+        function done(response) {
+         
+          $scope.jsonArrayCity = response.data;
+
+        }
+        function fail(response) {
+          alert(response.data);
+          $scope.fetchDonorsCity();
+        }
+      }
+
+      $scope.jsonArrayMeds;
+      $scope.fetchMedsAvail = function () {
+        //alert("in fetch");
+        var url = "/get-angular-find-medAvail-med";
+        $http.get(url).then(done, fail);
+        function done(response) {
+         // alert(JSON.stringify(response.data));
+          $scope.jsonArrayMeds = response.data;
+
+        }
+        function fail(response) {
+          alert(response.data);
+          $scope.fetchMedsAvail();
+        }
+      }
+
+      //---------------------------
+
+      $scope.selmed = "";
+      $scope.selcity = "";
+      $scope.doShowSelCity = function () {
+       // alert($scope.selcity.city);
+        //AJAX Request
+      }
+      //-----------------
+      $scope.cityJSONAry;
+      $scope.doShowSelMed = function () {
+       // alert($scope.selmed.med);
+
+      }
+
+      //------------------
+      $scope.jsonArray;
+      $scope.dofetchDonors = function () {
+        var url = "/fetch-donors?medKuch=" + $scope.selmed.med + "&cityKuch=" + $scope.selcity.city;
+       // alert(url);
+        $http.get(url).then(done, fail);
+        function done(response) {
+         // alert(JSON.stringify(response.data));
+          $scope.jsonArray = response.data;
+
+        }
+        function fail(response) {
+          alert(response.data);
+        }
+
+      }
+
+
+      $scope.selOneObj;
+      $scope.doShowOne = function (selIndex) {
+        $scope.selOneObj = $scope.jsonArray[selIndex];
+      }
+
+
+     $scope.logout=function(){
+        
+        localStorage.removeItem("activeKuch");
+         location.href="index.html";
+      
+
+      }
+
+
+    })
+
+  </script>
+</head>
+
+<body ng-app="myModule" ng-controller="myController" ng-init="fetchDonorsCity(); fetchMedsAvail();">
+  <nav class="navbar bg-dark border-bottom border-bottom-dark" data-bs-theme="dark">
+    <div class="col-md-3 offset-md-1 " style="color: deepskyblue;">
+      <h2>
+        
+        
+        
+        
+        
+        <b>Help Rx</b></h2>
+    </div>
+
+    <div class=" col-md-3 offset-md-1 d-grid gap-2 d-md-block">
+
+      <button type="button" class="btn btn-primary" id="logout" ng-click="logout();">
+        Logout
+      </button>
+    </div>
+    <br>
+  </nav><br><br>
+
+  <center>
+    <h1>Medicine Finder</h1>
+  </center><br><br>
+
+  <div class="row">
+    <div class="col offset-md-1">
+      <label for="" class="form-label">
+        <h4>City</h4>
+      </label>
+      <select class="form-select" ng-options="obj.city for obj in jsonArrayCity" ng-model="selcity"
+        ng-change="doShowSelCity();" aria-label="Default select example">
+        <!--here we have made a new model selObj that will store the selected city and selected medicine -->
+        <option value="">Select</option>
+
+      </select>
+
+    </div>
+    <div class="col offset-md-1" style="margin-right: 90px;">
+      <label for="" class="form-label">
+        <h4>Medicine-List</h4>
+      </label>
+      <select class="form-select" ng-options="obj.med for obj in jsonArrayMeds" ng-change="doShowSelMed();"
+        ng-model="selmed" aria-label="Default select example">
+        <option value="">Select</option>
+
+      </select>
+
+    </div>
+  </div><br><br>
+  <div>
+    <center><button type="button" class="btn btn-primary" ng-click="dofetchDonors();">
+        Find Donors
+      </button></center>
+  </div>
+  <br>
+  <br>
+  <hr>
+  <br>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3" ng-repeat="obj in jsonArray">
+        <div class="card">
+          <div class="card-body">
+            <img src="pics/medicine.png"  class="card-img-top" alt="...">
+            <h5 class="card-title"><span>Name: </span>{{obj.name}}</h5>
+            <h5 class="card-title"><span>Mobile: </span>{{obj.mobile}}</h5>
+            <h5 class="card-title"><span>Exp Date: </span>{{obj.expdate}}</h5>
+            <h5 class="card-title"><span>Contact Time:</span>{{obj.availablefrom}}<span> - </span>{{obj.availableto}}
+            </h5>
+            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalDetails"
+              ng-click="doShowOne($index);">More Details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" tabindex="-1" id="modalDetails">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Donor-Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col">
+              <label for="" class="form-label"><b>Email</b></label>
+              <input type="text" class="form-control" value="{{selOneObj.email}}" aria-label="">
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col">
+              <label for="" class="form-label"><b>Address</b></label>
+              <input type="text" class="form-control" value="{{selOneObj.address}}" aria-label="">
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col">
+              <label for="" class="form-label"><b>Id-Proof</b></label>
+              <input type="text" class="form-control" value="{{selOneObj.id}}" aria-label="">
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col">
+              <label for="" class="form-label"><b>Id-Proof-pic</b></label>
+              <img src="uploads/{{selOneObj.idpicname}}" alt="" width="100" height="100">
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col">
+              <label for="" class="form-label"><b>Medicine Quantity</b></label>
+              <input type="text" class="form-control" value="{{selOneObj.qty}}" aria-label="">
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col">
+              <label for="" class="form-label"><b>Medicine Packing</b></label>
+              <input type="text" class="form-control" value="{{selOneObj.packing}}" aria-label="">
+            </div>
+          </div>
+
+
+          
+
+
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

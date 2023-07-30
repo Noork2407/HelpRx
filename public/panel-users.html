@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <script src="script/angular.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script>
+         var module=angular.module("myModule",[]);
+         module.controller("myController",function($scope,$http){
+            $scope.jsonArray;
+            
+            $scope.fetchRecords=function()
+                {
+                    var url="/get-angular-users-all-records";
+                    $http.get(url).then(done,fail);
+                    function done(response)
+                        {
+                            //alert(JSON.stringify(response.data));
+                            $scope.jsonArray=response.data;
+
+                        }
+                     function fail(response)
+                        {
+                                alert(response.data);
+                                $scope.fetchRecords();
+                        }   
+                }
+              
+            $scope.doBlock=function(email)
+            {
+             // alert("in block");
+                  var url="/get-angular-users-block?kuchEmail="+email;
+                  $http.get(url).then(done,fail);
+                  function done(response)
+                  {
+                    alert(response.data);
+                    $scope.fetchRecords();
+                  }
+                  function fail(response)
+                  {
+                    alert(response);
+
+                  }
+            }
+
+            $scope.doResume=function(email)
+            {
+             // alert("in resume");
+                  var url="/get-angular-users-resume?kuchEmail="+email;
+                  $http.get(url).then(done,fail);
+                  function done(response)
+                  {
+                    alert(response.data);
+                    $scope.fetchRecords();
+                  }
+                  function fail(response)
+                  {
+                    alert(response);
+
+                  }
+            }
+
+            
+    $scope.logout=function(){
+        
+        localStorage.removeItem("activeKuch");
+         location.href="index.html";
+      
+
+      }
+
+          
+
+         })
+    </script>
+  </head>
+  
+  <body ng-app="myModule" ng-controller="myController">
+    <nav class="navbar bg-dark border-bottom border-bottom-dark" data-bs-theme="dark">
+        <div class="col-md-3 offset-md-1 " style="color: deepskyblue;">
+          <h2><b>Help Rx</b></h2>
+        </div>
+    
+        <div class=" col-md-3 offset-md-1 d-grid gap-2 d-md-block">
+    
+          <button type="button" class="btn btn-primary" ng-click="logout">
+            Logout
+          </button>
+        </div>
+        <br>
+      </nav><br><br>
+ <center><h1>USERS</h1></center><br><br>
+     <center><button type="button" class="btn btn-primary" ng-click="fetchRecords();" value="fetchRecords">
+        fetchRecords
+      </button></center> <br><br>
+      <div style="margin-left: 20px; margin-right: 20px;" >
+    <table class="table table-hover" margin="auto">
+        <thead >
+          <tr class="table-group-divider">
+            <th scope="col">Sno.</th>
+            <th scope="col">Email</th>
+            <th scope="col">Type</th>
+            <th scope="col">Dos</th>
+            <th scope="col">Status</th>
+            <th scope="col">Controls</th>
+            <tr ng-repeat="obj in jsonArray" >
+                <td>{{$index+1}}</td>
+                <td>{{obj.email}}</td>
+                <td>{{obj.type}}</td>
+                <td>{{obj.dos}}</td>
+                <td>{{obj.status}}</td>
+               
+                <td >
+                        <input type="button" value="Block" ng-click="doBlock(obj.email);">
+                        <input type="button" value="Resume" ng-click="doResume(obj.email);">
+                </td>
+            </tr>
+          </tr>
+        </thead>
+        
+      </table></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+  </body>
+</html>

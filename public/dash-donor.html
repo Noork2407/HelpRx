@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bootstrap demo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  <style>
+    .container {
+      margin-top: 100px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+      align-items: center;
+    }
+  </style>
+   <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+   integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script>
+    $(document).ready(function () {
+
+      function setActiveUser()
+    {
+      var au=localStorage.getItem("activeKuch");
+      // alert(au);
+      $("#spanWelcome").html(au);
+
+     
+      $("#txtEmail").val(au).prop("readonly",true);
+    }
+    setActiveUser();
+
+
+      //password validation ========================
+      $("#txtnewPassword").blur(function () {
+     
+        var password = $(this).val();
+        // Validate password length
+        if (password.length < 8) {
+        
+          $("#resP").html("Password must be at least 8 characters long");
+          $("#resP").css("color", "red");
+          return;
+
+        } else {
+          $("#resP").html(""); 
+        }
+        // Validate presence of special characters
+        var specialChars = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+        if (!specialChars.test(password)) {
+          $("#resP").html("Password must contain at least one special character");
+          $("#resP").css("color", "red");
+          return;
+        } else {
+          $("#resP").html(""); 
+        }
+        // Validate presence of uppercase letters
+        var uppercaseChars = /[A-Z]/;
+        if (!uppercaseChars.test(password)) {
+          $("#resP").html("Password must contain at least one uppercase letter");
+          $("#resP").css("color", "red");
+          return;
+        } else {
+          $("#resP").html(""); 
+        }
+        // Validate presence of numbers
+        var numericChars = /[0-9]/;
+        if (!numericChars.test(password)) {
+          $("#resP").html("Password must contain at least one numeric character");
+          $("#resP").css("color", "red");
+          return;
+        } else {
+          $("#resP").html(""); 
+        }
+
+    })
+
+
+    $("#txtEmail").blur(function () {
+        //validation ........
+      
+        var r = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+        var email = $(this).val();
+        if (r.test(email) == false) {
+          //  alert("");
+          $("#res").html("  Invalid email");
+          $("#res").css("color", "red");
+        }
+        else
+        $("#res").html("");
+      })
+
+
+      $("#txtoldPassword").blur(function(){
+          
+      //  password = $(this).val();
+        var email = $("#txtEmail").val();
+
+        var obj ={
+          type:"get",
+          url:"/chk-password",
+          data:{
+            kuchEmail:email
+          }
+        }
+
+        $.ajax(obj).done(function(resp){
+          if(resp==$("#txtoldPassword").val())
+          {
+            $("#txtnewPassword").attr("disabled",false);
+            $("#txtnew2Password").attr("disabled",false);
+          }
+          else
+          {
+           
+            alert("incorrect password");
+          }
+
+        }).fail(function(err)
+        {
+          alert(err);
+        })
+
+      })
+
+
+      $("#btnupdate").click(function(){
+       // alert("in function");
+        var oldp =$("#txtoldPassword").val();
+        var newp = $("#txtnewPassword").val();
+        var new2p = $("#txtnew2Password").val();
+        var email = $("#txtEmail").val();
+
+        if((oldp!=newp)&&(newp==new2p))
+        {
+          //alert("in if")
+            var obj ={
+              type:"get",
+              url:"/update-password",
+              data:{
+                kuchEmail : email,
+                kuchPwd : newp
+              }
+            }
+
+            $.ajax(obj).done(function(resp)
+            {
+             // alert(resp);
+             $("#resupdate").html(resp);
+            }).fail(function(err)
+            {
+              alert(err);
+            })
+        }
+
+      })
+
+      $("#logout").click(function(){
+        
+        localStorage.removeItem("activeKuch");
+         location.href="index.html";
+      
+
+      })
+
+
+    
+  })
+  </script>
+
+</head>
+
+<body>
+
+  <nav class="navbar bg-dark border-bottom border-bottom-dark" data-bs-theme="dark">
+    <div class="col-md-3 offset-md-1 " style="color: deepskyblue;">
+      <h2><b>Help Rx</b></h2>
+    </div>
+
+    <div class=" col-md-3 offset-md-1 d-grid gap-2 d-md-block">
+
+      <button type="button" class="btn btn-primary" id="logout">
+        Logout
+      </button>
+    </div>
+    <br>
+  </nav>
+  <br>
+  <br>
+ <center><h2> <span>Welcome  <span id="spanWelcome">*</span> </span></h2></center>
+  <div class="container">
+    <div class="card" style="width: 18rem;">
+      <img src="pics/male-angel-business-suit-flat-illustration_124715-581 - Copy.jpg" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Profile</h5>
+
+        <a href="profile.html" class="btn btn-primary">Profile</a>
+      </div>
+    </div>
+
+    <div class="card" style="width: 18rem;">
+      <img src="pics/medicine.png" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Avail Medicines</h5>
+
+        <a href="avail-med.html" class="btn btn-primary">Avail Medicines</a>
+      </div>
+    </div>
+
+    <div class="card" style="width: 18rem;">
+      <img src="pics/pharmacy.png" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Medicine Manager</h5>
+
+        <a href="med-manager.html" class="btn btn-primary">Manage Medicines</a>
+      </div>
+    </div>
+
+    <div class="card" style="width: 18rem;">
+      <img src="pics/settings.png" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Settings</h5>
+
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#settingsModal">
+          Settings
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5 text-center" id="settingsModalLabel">Settings</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-body">
+            <form method="post">
+
+            <center><h2>Change Password</h2></center><br>
+              <br>
+              <div class="form-group">
+              
+                <label for="txtEmail" class="col-form-label">Email</label>
+                <span id="res"> *</span>
+                <input type="text" class="form-control" id="txtEmail">
+              </div>
+              <div class="form-group">
+                <label for="txtoldPassword" class="col-form-label">Old Password</label>
+                
+                <input type="text" class="form-control" id="txtoldPassword">
+              </div>
+              <div class="form-group">
+                <label for="txtnewPassword"  class="col-form-label">New Password</label>
+                <span id="resP"> *</span>
+                <input type="text" disabled class="form-control" id="txtnewPassword">
+              </div>
+              <div class="form-group">
+                <label for="txtnew2Password"  class="col-form-label">Re-enter New Password</label>
+              
+                <input type="text" disabled class="form-control" id="txtnew2Password">
+              </div>
+
+
+            </form>
+
+          </div>
+        </div>
+        <div>
+          <center><button type="button" id="btnupdate" class="btn btn-primary">Update</button></center>
+        </div>
+        <center>
+          <div id="resupdate">*</div>
+        </center><br>
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bootstrap demo</title>
+  <link rel="stylesheet" href="style/myprofile.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+    integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  
+  <script>
+    function comboBoxChanged(city) {
+
+      var i = city.selectedIndex;
+
+      if (city[i].value == "Custom") {
+        var customValue = prompt("Enter a custom value:");
+        city[i].value = customValue;
+        city[i].text = customValue;
+      }
+    }
+
+    function doprev(refFile, prevImg) {
+      const [file] = refFile.files
+      if (file) {
+        prevImg.src = URL.createObjectURL(file)
+      }
+    }
+
+    $(document).ready(function () {
+      $("#logout").click(function(){
+        
+        localStorage.removeItem("activeKuch");
+         location.href="index.html";
+      
+
+      })
+
+
+
+      $("#btnSearch").click(doSearch);
+
+      function setActiveUser()
+    {
+      var au=localStorage.getItem("activeKuch");
+      // alert(au);
+      $("#txtEmail").val(au).prop("readonly",true);
+    }
+    setActiveUser();
+    });
+
+    function doSearch() {
+      var emailKu = $("#txtEmail").val();
+      var obj = {
+        type: "get",
+        url: "/get-json-record",
+        data: {
+          kuchEmail: emailKu
+        }
+      }
+
+      $.ajax(obj).done(function (respJSONKuch) {
+
+        if(respJSONKuch =="new user")
+        {
+
+            $("#btnSubmit").attr("disabled",false);
+        }
+        else
+        {
+          $("#btnUpdate").attr("disabled",false);
+          $("#btnDelete").attr("disabled",false);
+
+      //alert(JSON.stringify(respJSONKuch));//:-)
+       
+        //var dateObj = new Date(respJSONKuch[0].dob); // Convert the date to a JavaScript Date object
+       //var formattedDate = dateObj.toLocaleDateString('en-GB'); // Format the date as "dd/mm/yyyy"
+
+        $("#txtEmail").val(respJSONKuch[0].email)
+        $("#txtName").val(respJSONKuch[0].name)
+        $("#txtPhone").val(respJSONKuch[0].mobile);
+        $("#txtAdd").val(respJSONKuch[0].address);
+        $("#txtCity").val(respJSONKuch[0].city);
+        $("#txtdob").val(respJSONKuch[0].dob);
+        $("#txtGender").val(respJSONKuch[0].gender);
+        $("#txtIDProof").val(respJSONKuch[0].id);
+        $("#hdn").val(respJSONKuch[0].idpicname);
+        $("#txtFrom").val(respJSONKuch[0].availablefrom);
+        $("#txtTo").val(respJSONKuch[0].availableto);
+      
+        $("#preview").prop("src", "uploads/" + respJSONKuch[0].idpicname);
+
+        }
+  
+      }).fail(function (errKuch) {
+        alert(errKuch)
+        //$("#res").html(respKuch);
+      })
+
+      
+    }
+
+   
+
+
+  </script>
+
+</head>
+
+<body class="background">
+  <nav class="navbar bg-dark border-bottom border-bottom-dark" data-bs-theme="dark">
+    <div class="col-md-3 offset-md-1 " style="color: deepskyblue;">
+        <h2><b>Help Rx</b></h2>
+    </div>
+
+    <div class=" col-md-3 offset-md-1 d-grid gap-2 d-md-block">
+
+        <button type="button" class="btn btn-primary" id="logout">
+            Logout
+        </button>
+    </div>
+    <br>
+</nav>
+  <form method="post" enctype="multipart/form-data">
+    <div>
+      <center>
+        <h1
+          style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; margin-top: 10px;">
+          PROFILE</h1>
+      </center>
+
+      <div style="margin-right: 80px;">
+      <div class="row">
+        <div class="col offset-md-1">
+          <label for="inputEmail" class="form-label">E-mail</label>
+          <input type="text" class="form-control" id = "txtEmail" name="txtEmail" placeholder="abc@xyz.com" 
+            aria-label="First name">
+        </div>
+        <div class="col offset-md-1" style="margin-top: 20px;">
+          <button type="button" id="btnSearch" class="btn btn-primary">Search</button>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col offset-md-1">
+          <label for="inputName" class="form-label">Name</label>
+          <input type="text" class="form-control" id="txtName" name="txtName"  placeholder="Name"
+            aria-label="First name">
+        </div>
+        <div class="col offset-md-1">
+          <label for="inputContact" class="form-label">Contact Number</label>
+          <input type="text" class="form-control" name="txtPhone" id="txtPhone" 
+            placeholder="Phone number">
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col offset-md-1">
+          <label for="inputAddress" class="form-label">Address</label>
+          <input type="text" class="form-control" name="txtAdd" id="txtAdd"  placeholder="Address">
+        </div>
+        <div class="col offset-md-1">
+          <label for="inputCity" class="form-label">City</label>
+          <select class="form-select" name="txtCity" id="txtCity" onchange="comboBoxChanged(this);"
+            aria-label="Default select example">
+            <option selected>Open this select menu</option>
+            <option value="Faridkot">Faridkot</option>
+            <option value="Bathinda">Bathinda</option>
+            <option value="Banglore">Banglore</option>
+            <option value="Custom">Custom</option>
+          </select>
+        </div>
+      </div>
+
+      <br>
+
+      <div class="row">
+        <div class="col offset-md-1">
+          <label for="inputDate" class="form-label">Date of Birth</label>
+          <input type="date" id="txtdob" name="txtdob" class="form-control">
+        </div>
+        <div class="col offset-md-1">
+          <br>
+          <label for="inputtime" class="form-label">Availability Hours</label>
+           <span>From</span><input type="time" name="txtFrom" id="txtFrom"><span>to</span><input type="time" name="txtTo" id="txtTo">
+          
+          
+          </div>
+        <div class="col offset-md-1">
+          <label for="inputGender" class="form-label">Gender</label>
+          <select class="form-select" name="txtGender" id="txtGender" aria-label="Default select example">
+            <option selected>Open this select menu</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <br>
+
+      <div class="row">
+
+        <div class="col-md-3 offset-md-1">
+          <label for="inputprooftype" class="form-label">ID-Proof</label>
+          <select class="form-select" name="txtIDProof" id="txtIDProof" aria-label="Default select example">
+            <option selected>Open this select menu</option>
+            <option value="Pan Card">PAN Card</option>
+            <option value="Adhar Card">Adhar Card</option>
+            <option value="Passport">Passport</option>
+          </select>
+        </div>
+
+        <div class="col-md-3 offset-md-1">
+          <label for="inputproof" class="form-label">Upload Proof Pic</label>
+          <input type="file" name="ppic" class="form-control" onchange="doprev(this,preview)" accept="image/*">
+        </div>
+        <br> <input type="hidden" id="hdn" name="hdn">
+
+        <div class="col-md-3 offset-md-1">
+          <label for="Picrev" class="form-label">Preview</label>
+          <img src="" id="preview" alt="" width="100" class="form-label" height="100">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3 ">
+          <center> <button type="submit" id="btnSubmit" disabled formaction="/profile-donor-db-signup" class="btn btn-primary">Submit</button>
+          </center>
+        </div>
+        <div class="col-md-3 ">
+          <center> <button type="submit" id="btnUpdate" disabled formaction="/profile-donor-db-update" class="btn btn-primary">Update</button>
+          </center>
+        </div>
+        <div class="col-md-3 ">
+          <center> <button type="submit" id="btnDelete" disabled formaction="/profile-donor-db-delete" class="btn btn-primary">Delete</button>
+          </center>
+        </div>
+
+      </div>
+
+
+
+
+
+
+
+
+</div>
+    </div>
+  </form>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>
